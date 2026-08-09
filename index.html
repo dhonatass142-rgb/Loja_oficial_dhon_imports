@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso - Dhon Imports</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="background-overlay"></div>
+
+    <div class="container">
+        <header class="logo-area">
+            <div class="crown-icon"><i class="fa-solid fa-crown"></i></div>
+            <h1>DHON</h1>
+            <h2>IMPORTS</h2>
+            <p>ATITUDE • ESTILO • QUALIDADE</p>
+        </header>
+
+        <main class="login-card" id="login-box">
+            <div class="shopping-bag-icon">
+                <i class="fa-solid fa-bag-shopping"></i>
+            </div>
+            
+            <h3 id="form-title">LOGIN</h3>
+
+            <form id="auth-form">
+                <div class="input-group" id="name-group" style="display: none;">
+                    <i class="fa-solid fa-signature"></i>
+                    <input type="text" id="name" placeholder="Nome completo">
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="username" placeholder="E-mail ou usuário" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" placeholder="Senha" required>
+                    <i class="fa-solid fa-eye eye-icon" id="toggle-password"></i>
+                </div>
+
+                <button type="submit" class="btn-entrar" id="btn-submit">ENTRAR</button>
+            </form>
+
+            <div class="divider" id="divider-box">
+                <span>ou</span>
+            </div>
+
+            <button type="button" class="btn-criar-conta" id="btn-toggle-mode">
+                <i class="fa-solid fa-user-plus"></i> CRIAR CONTA
+            </button>
+
+            <div class="forgot-password" id="forgot-box">
+                <a href="#">Esqueceu sua senha?</a>
+            </div>
+        </main>
+
+        <footer class="footer-features">
+            <div class="feature-item">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span>ENTREGA<br>PARA TODO BRASIL</span>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>COMPRA<br>100% SEGURA</span>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-tags"></i>
+                <span>OFERTAS<br>EXCLUSIVAS</span>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-headset"></i>
+                <span>SUPORTE<br>DEDICADO</span>
+            </div>
+        </footer>
+
+        <div class="copyright">
+            © 2026 Dhon Imports. Todos os direitos reservados.
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const authForm = document.getElementById('auth-form');
+            const formTitle = document.getElementById('form-title');
+            const nameGroup = document.getElementById('name-group');
+            const nameInput = document.getElementById('name');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const btnSubmit = document.getElementById('btn-submit');
+            const btnToggleMode = document.getElementById('btn-toggle-mode');
+            const dividerBox = document.getElementById('divider-box');
+            const forgotBox = document.getElementById('forgot-box');
+            const togglePassword = document.getElementById('toggle-password');
+
+            let isRegisterMode = false;
+
+            // Credenciais do Admin
+            const ADMIN_CONFIG = {
+                email: "dhon@imports.com",
+                pass: "123456"
+            };
+
+            // Alternar entre modo Login e modo Cadastro de cliente
+            btnToggleMode.addEventListener('click', () => {
+                isRegisterMode = !isRegisterMode;
+                if (isRegisterMode) {
+                    formTitle.textContent = "CADASTRAR NOVO USUÁRIO";
+                    formTitle.style.color = "#2979ff";
+                    nameGroup.style.display = 'flex';
+                    nameInput.setAttribute('required', 'true');
+                    btnSubmit.textContent = "CADASTRAR";
+                    btnToggleMode.innerHTML = `<i class="fa-solid fa-arrow-left"></i> VOLTAR PARA LOGIN`;
+                    dividerBox.style.display = 'none';
+                    forgotBox.style.display = 'none';
+                } else {
+                    formTitle.textContent = "LOGIN";
+                    formTitle.style.color = "";
+                    nameGroup.style.display = 'none';
+                    nameInput.removeAttribute('required');
+                    btnSubmit.textContent = "ENTRAR";
+                    btnToggleMode.innerHTML = `<i class="fa-solid fa-user-plus"></i> CRIAR CONTA`;
+                    dividerBox.style.display = 'block';
+                    forgotBox.style.display = 'block';
+                }
+            });
+
+            // Mostrar/Ocultar senha
+            if (togglePassword) {
+                togglePassword.addEventListener('click', () => {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        togglePassword.classList.replace('fa-eye', 'fa-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        togglePassword.classList.replace('fa-eye-slash', 'fa-eye');
+                    }
+                });
+            }
+
+            // Envio do formulário (Login ou Cadastro)
+            authForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const emailVal = usernameInput.value.trim();
+                const passVal = passwordInput.value.trim();
+
+                if (isRegisterMode) {
+                    // Lógica de Cadastro de Novo Cliente
+                    const nomeVal = nameInput.value.trim();
+                    let users = JSON.parse(localStorage.getItem('dhon_users')) || [];
+
+                    // Verificar se o e-mail já existe
+                    const userExists = users.find(u => u.email === emailVal);
+                    if (userExists) {
+                        alert('Este e-mail já está cadastrado!');
+                        return;
+                    }
+
+                    users.push({ name: nomeVal, email: emailVal, pass: passVal });
+                    localStorage.setItem('dhon_users', JSON.stringify(users));
+                    
+                    alert('Cadastro realizado com sucesso! Faça login para continuar.');
+                    window.location.reload();
+                } else {
+                    // Lógica de Login (Admin ou Cliente comum)
+                    if (emailVal === ADMIN_CONFIG.email && passVal === ADMIN_CONFIG.pass) {
+                        localStorage.setItem('dhon_admin_logged', 'true');
+                        alert('Login de Administrador efetuado com sucesso!');
+                        window.location.href = 'home.html';
+                        return;
+                    }
+
+                    // Verificar se é um cliente comum cadastrado
+                    let users = JSON.parse(localStorage.getItem('dhon_users')) || [];
+                    const validUser = users.find(u => u.email === emailVal && u.pass === passVal);
+
+                    if (validUser) {
+                        localStorage.setItem('dhon_user_logged', validUser.name);
+                        alert(`Bem-vindo de volta, ${validUser.name}!`);
+                        window.location.href = 'home.html';
+                    } else {
+                        alert('E-mail ou senha incorretos!');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
